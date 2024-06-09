@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	url := "https://api.youngplatform.com/api/v3/charts?pair=BTC-EUR&interval=60&limit=168"
+	url := "https://api.youngplatform.com/api/v3/charts?pair=BTC-EUR&interval=60&limit=365"
 	method := "GET"
 
 	client := &http.Client{}
@@ -37,7 +37,9 @@ func main() {
 	var candles []indicator.Candle
 
 	json.Unmarshal(body, &candles)
-	graph := indicator.Graph{candles, 60, 168}
+	graph := indicator.Graph{candles, 60, 365}
 
-	fmt.Println(graph.ATR(14))
+	SP, direction := graph.SuperTrend(10, 3)
+	fmt.Println("SP", SP)
+	fmt.Println("direction", direction)
 }
