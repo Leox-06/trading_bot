@@ -1,24 +1,9 @@
-package indicator
+package trading_bot
 
-type Candle struct {
-	Open   float32 `json:"open"`
-	High   float32 `json:"high"`
-	Low    float32 `json:"low"`
-	Close  float32 `json:"close"`
-	Volume float32 `json:"volume"`
-	Time   float32 `json:"time"`
-}
-
-type Graph struct {
-	Candles  []Candle
-	Interval int
-	Limit    int
-}
-
-func (graph Graph) ATR(length int) (ATR []float32) {
-	ATR = make([]float32, graph.Limit)
+func (graph Graph) ATR(length int) (ATR []float64) {
+	ATR = make([]float64, graph.Limit)
 	prev_candle := Candle{0, 0, 0, 0, 0, 0}
-	prev_ATR := float32(0)
+	prev_ATR := float64(0)
 
 	for n := graph.Limit - 1; n >= 0; n-- {
 		curr_candle := graph.Candles[n]
@@ -26,7 +11,7 @@ func (graph Graph) ATR(length int) (ATR []float32) {
 		// TR := max((curr_candle.High - curr_candle.Low), math.Abs(curr_candle.High - prev_candle.Close), math.Abs(curr_candle.Low - prev_candle.Close))
 		TR := max(curr_candle.High, prev_candle.Close) - min(curr_candle.Low, prev_candle.Close)
 
-		prev_ATR = (prev_ATR*(float32(length)-1) + TR) / float32(length)
+		prev_ATR = (prev_ATR*(float64(length)-1) + TR) / float64(length)
 		prev_candle = curr_candle
 		ATR[n] = prev_ATR
 	}
@@ -34,14 +19,14 @@ func (graph Graph) ATR(length int) (ATR []float32) {
 	return
 }
 
-func (graph Graph) SuperTrend(length int, factor float32) (SuperTrend []float32, direction []int) {
-	SuperTrend = make([]float32, graph.Limit)
+func (graph Graph) SuperTrend(length int, factor float64) (SuperTrend []float64, direction []int) {
+	SuperTrend = make([]float64, graph.Limit)
 
 	direction = make([]int, graph.Limit)
 
-	prev_SP_upper_band := float32(3.4e+38)
-	prev_SP_lower_band := float32(0)
-	prev_SuperTrend := float32(0)
+	prev_SP_upper_band := 3.4e+38
+	prev_SP_lower_band := 0.0
+	prev_SuperTrend := 0.0
 	prev_direction := 0
 
 	ATR := graph.ATR(length)
